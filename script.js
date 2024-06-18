@@ -23,13 +23,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.updateChart = function() {
         var jobTitle = document.getElementById('jobTitle').value;
-        fetch(`https://jobs.github.com/positions.json?description=${jobTitle}`)
-            .then(response => response.json())
+        // Using cors-anywhere proxy for testing to handle CORS issues
+        var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        var apiUrl = `https://jobs.github.com/positions.json?description=${jobTitle}`;
+
+        fetch(proxyUrl + apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
                 var jobCounts = {};
                 data.forEach(job => {
                     var date = new Date(job.created_at);
-                    var month = date.getFullYear() + '-' + (date.getMonth() + 1);
+                    var month = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0');
                     if (jobCounts[month]) {
                         jobCounts[month]++;
                     } else {
@@ -43,6 +52,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 jobTrendChart.data.labels = labels;
                 jobTrendChart.data.datasets[0].data = values;
                 jobTrendChart.update();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
             });
     }
 });
