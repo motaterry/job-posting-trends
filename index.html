@@ -13,6 +13,13 @@
     <form onsubmit="event.preventDefault(); updateChart();">
         <label for="jobTitle">Job Title:</label>
         <input type="text" id="jobTitle" name="jobTitle">
+        <label for="timeframe">Timeframe:</label>
+        <select id="timeframe" name="timeframe">
+            <option value="1month">Last 1 Month</option>
+            <option value="3months">Last 3 Months</option>
+            <option value="6months">Last 6 Months</option>
+            <option value="12months">Last 12 Months</option>
+        </select>
         <button type="submit">Filter</button>
     </form>
     <div id="error-message" style="display:none; color: red; margin-top: 10px;"></div>

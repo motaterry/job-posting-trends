@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         options: {
             scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'month'
+                    }
+                },
                 y: {
                     beginAtZero: true
                 }
@@ -23,8 +29,31 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.updateChart = function() {
         var jobTitle = document.getElementById('jobTitle').value;
+        var timeframe = document.getElementById('timeframe').value;
         var errorMessage = document.getElementById('error-message');
         errorMessage.style.display = 'none'; // Hide error message before new request
+
+        // Calculate the start date based on the selected timeframe
+        var endDate = new Date();
+        var startDate = new Date();
+        switch (timeframe) {
+            case '1month':
+                startDate.setMonth(endDate.getMonth() - 1);
+                break;
+            case '3months':
+                startDate.setMonth(endDate.getMonth() - 3);
+                break;
+            case '6months':
+                startDate.setMonth(endDate.getMonth() - 6);
+                break;
+            case '12months':
+                startDate.setFullYear(endDate.getFullYear() - 1);
+                break;
+        }
+
+        // Format dates to match the GitHub Jobs API expected format
+        var startDateStr = startDate.toISOString().split('T')[0];
+        var endDateStr = endDate.toISOString().split('T')[0];
 
         // Using cors-anywhere proxy for testing to handle CORS issues
         var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
@@ -41,11 +70,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 var jobCounts = {};
                 data.forEach(job => {
                     var date = new Date(job.created_at);
-                    var month = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0');
-                    if (jobCounts[month]) {
-                        jobCounts[month]++;
-                    } else {
-                        jobCounts[month] = 1;
+                    if (date >= startDate && date <= endDate) {
+                        var month = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0');
+                        if (jobCounts[month]) {
+                            jobCounts[month]++;
+                        } else {
+                            jobCounts[month] = 1;
+                        }
                     }
                 });
 
