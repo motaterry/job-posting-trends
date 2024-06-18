@@ -23,15 +23,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.updateChart = function() {
         var jobTitle = document.getElementById('jobTitle').value;
+        fetch(`https://jobs.github.com/positions.json?description=${jobTitle}`)
+            .then(response => response.json())
+            .then(data => {
+                var jobCounts = {};
+                data.forEach(job => {
+                    var date = new Date(job.created_at);
+                    var month = date.getFullYear() + '-' + (date.getMonth() + 1);
+                    if (jobCounts[month]) {
+                        jobCounts[month]++;
+                    } else {
+                        jobCounts[month] = 1;
+                    }
+                });
 
-        // Dummy data for demonstration. Replace this with actual data fetching logic.
-        var data = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            data: [10, 15, 20, 25, 30, 35]
-        };
+                var labels = Object.keys(jobCounts);
+                var values = Object.values(jobCounts);
 
-        jobTrendChart.data.labels = data.labels;
-        jobTrendChart.data.datasets[0].data = data.data;
-        jobTrendChart.update();
+                jobTrendChart.data.labels = labels;
+                jobTrendChart.data.datasets[0].data = values;
+                jobTrendChart.update();
+            });
     }
 });

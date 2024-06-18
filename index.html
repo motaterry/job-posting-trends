@@ -10,11 +10,11 @@
 <body>
     <h1>Job Posting Trends</h1>
     <canvas id="jobTrendChart" width="600" height="400"></canvas>
-    <div>
+    <form onsubmit="event.preventDefault(); updateChart();">
         <label for="jobTitle">Job Title:</label>
         <input type="text" id="jobTitle" name="jobTitle">
-        <button onclick="updateChart()">Filter</button>
-    </div>
+        <button type="submit">Filter</button>
+    </form>
     <script src="script.js"></script>
 </body>
 </html>
