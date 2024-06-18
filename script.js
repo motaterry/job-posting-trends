@@ -23,6 +23,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.updateChart = function() {
         var jobTitle = document.getElementById('jobTitle').value;
+        var errorMessage = document.getElementById('error-message');
+        errorMessage.style.display = 'none'; // Hide error message before new request
+
         // Using cors-anywhere proxy for testing to handle CORS issues
         var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         var apiUrl = `https://jobs.github.com/positions.json?description=${jobTitle}`;
@@ -55,6 +58,8 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
+                errorMessage.textContent = 'Error fetching data: ' + error.message;
+                errorMessage.style.display = 'block';
             });
     }
 });
