@@ -49,6 +49,12 @@ document.addEventListener("DOMContentLoaded", function() {
             case '12months':
                 startDate.setFullYear(endDate.getFullYear() - 1);
                 break;
+            case '5years':
+                startDate.setFullYear(endDate.getFullYear() - 5);
+                break;
+            case '10years':
+                startDate.setFullYear(endDate.getFullYear() - 10);
+                break;
         }
 
         // Format dates to match the GitHub Jobs API expected format
@@ -83,9 +89,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 var labels = Object.keys(jobCounts);
                 var values = Object.values(jobCounts);
 
+                if (labels.length === 0) {
+                    throw new Error('No data available for the selected timeframe and job title.');
+                }
+
                 jobTrendChart.data.labels = labels;
                 jobTrendChart.data.datasets[0].data = values;
                 jobTrendChart.update();
+
+                document.getElementById('grid-container').style.display = 'none';
+                document.getElementById('jobTrendChart').style.display = 'block';
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
