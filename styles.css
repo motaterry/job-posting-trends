@@ -13,6 +13,8 @@ body {
 .screen {
     display: none;
     text-align: center;
+    width: 100%;
+    max-width: 1200px;
 }
 
 .screen.active {
@@ -21,14 +23,15 @@ body {
 
 .content {
     max-width: 800px;
-    padding: 20px;
+    padding: 40px;
     border: 1px solid #333;
     border-radius: 10px;
     background-color: #111;
+    margin: auto;
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 2.5em;
     margin-bottom: 10px;
 }
 
@@ -40,13 +43,13 @@ p {
 form, #timeframe-buttons {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     align-items: center;
 }
 
 input[type="text"] {
-    width: 80%;
-    padding: 10px;
+    width: 100%;
+    padding: 15px;
     border: 1px solid #333;
     border-radius: 5px;
     background-color: #222;
