@@ -32,6 +32,9 @@ body {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1000;
+    padding-top: 40px;  /* Ensure consistent padding */
+    padding-bottom: 40px;  /* Ensure consistent padding */
 }
 
 h1 {
@@ -52,7 +55,6 @@ form, #timeframe-buttons {
 }
 
 #timeframe-buttons {
-    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;

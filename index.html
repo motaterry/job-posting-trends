@@ -24,7 +24,10 @@
         <div class="content">
             <h1>Career Demand Forecast</h1>
             <p>Peering into the shadows of the job market, revealing hidden patterns and trends. Decode the pulse of your industry and the economy with insights you can't find anywhere else.</p>
-            <input type="text" id="jobRoleDisplay" disabled>
+            <form onsubmit="event.preventDefault(); updateChart('1year');">
+                <input type="text" id="jobRoleDisplay" placeholder="Start typing a Job Role (example: UX Designer)" required>
+                <button type="submit">See the magic</button>
+            </form>
             <canvas id="jobTrendChart" width="600" height="400"></canvas>
             <div id="timeframe-buttons">
                 <button onclick="updateChart('10years')">Past 10 Years</button>
