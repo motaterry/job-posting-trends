@@ -1,19 +1,10 @@
 import requests
 import pandas as pd
 import datetime
-import os
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 def fetch_job_posts(job_title, location):
-    app_id = os.getenv('ADZUNA_APP_ID')
-    app_key = os.getenv('ADZUNA_APP_KEY')
-    
-    if not app_id or not app_key:
-        print("Missing Adzuna API credentials")
-        return []
+    app_id = '6b5d580a'  # Replace with your Adzuna App ID
+    app_key = 'e8825cea476a7c35f4ec84faf82cdbfc'  # Replace with your Adzuna App Key
 
     url = f"https://api.adzuna.com/v1/api/jobs/us/search/1?app_id={app_id}&app_key={app_key}&results_per_page=50&what={job_title}&where={location}"
     response = requests.get(url)
