@@ -52,9 +52,11 @@ form, #timeframe-buttons {
 }
 
 #timeframe-buttons {
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 10px; /* Add gap for spacing between buttons */
 }
 
 input[type="text"] {
