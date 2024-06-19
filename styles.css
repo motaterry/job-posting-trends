@@ -1,92 +1,90 @@
+/* Add VT323 font family */
+body, h1, h2, h3, h4, h5, h6, p, label, button, input, select {
+    font-family: 'VT323', monospace;
+}
+
+/* Adjust the layout and styling */
 body {
-    font-family: 'Courier New', Courier, monospace;
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
     margin: 0;
     padding: 0;
-    background-color: #000;
-    color: #fff;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
-}
-
-.screen {
-    display: none;
-    text-align: center;
-    width: 100%;
-    max-width: 1200px;
-}
-
-.screen.active {
-    display: block;
-}
-
-.content {
-    max-width: 800px;
-    padding: 40px;
-    border: 1px solid #333;
-    border-radius: 10px;
-    background-color: #111;
-    margin: auto;
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding-top: 40px;  /* Ensure consistent padding */
-    padding-bottom: 40px;  /* Ensure consistent padding */
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
 h1 {
-    font-size: 2.5em;
     margin-bottom: 10px;
+    font-size: 3em;
 }
 
 p {
+    margin-bottom: 30px;
     font-size: 1.2em;
-    margin-bottom: 20px;
 }
 
-form, #timeframe-buttons {
+form {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-}
-
-#timeframe-buttons {
     flex-direction: row;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px; /* Add gap for spacing between buttons */
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 800px;
 }
 
 input[type="text"] {
-    width: 100%;
-    padding: 15px;
+    width: 70%;
+    padding: 12px;
+    font-size: 1.2em;
     border: 1px solid #333;
     border-radius: 5px;
     background-color: #222;
     color: #fff;
-    font-size: 1em;
 }
 
 button {
-    padding: 10px 20px;
-    border: 1px solid #333;
-    border-radius: 5px;
-    background-color: #444;
+    padding: 12px 24px;
+    font-size: 1.2em;
     color: #fff;
-    font-size: 1em;
+    background-color: #7D52FF;
+    border: 1px solid #7D52FF;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #555;
+#timeframe-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 
-.icon {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 20px;
+#timeframe-buttons button {
+    padding: 12px 24px;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Remove background and border for .content class */
+.content {
+    background-color: transparent;
+    border: none;
+}
+
+/* Chart container adjustments */
+canvas {
+    display: block;
+    margin: 20px 0;
+    width: 100%;
+    max-width: 800px;
 }
