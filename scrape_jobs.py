@@ -19,22 +19,25 @@ def fetch_job_posts(job_title, location):
     results = response.json().get('results', [])
     
     for job in results:
+        date_posted = job.get('created')
+        date_posted = datetime.datetime.strptime(date_posted, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d')  # Format the date
+
         job_data.append({
-            'title': job.get('title'),
-            'company': job.get('company', {}).get('display_name'),
-            'location': job.get('location', {}).get('display_name'),
-            'date_posted': job.get('created'),
-            'scraped_date': datetime.datetime.now().strftime('%Y-%m-%d')
+            'date_posted': date_posted,
+            'number_of_posts': 1  # Each job post is counted as 1
         })
 
-    print(f"Fetched job data: {job_data}")
-    return job_data
+    # Aggregate data by date
+    df = pd.DataFrame(job_data)
+    aggregated_data = df.groupby('date_posted').size().reset_index(name='number_of_posts')
+    
+    print(f"Fetched and aggregated job data: {aggregated_data}")
+    return aggregated_data
 
 # Example use
 job_posts = fetch_job_posts("UX Designer", "San Francisco, CA")
-if job_posts:
-    df = pd.DataFrame(job_posts)
-    df.to_csv('job_posts.csv', mode='w', index=False)
+if not job_posts.empty:
+    job_posts.to_csv('job_posts.csv', mode='w', index=False)
     print("CSV file has been created successfully.")
 else:
     print("No job posts found.")
