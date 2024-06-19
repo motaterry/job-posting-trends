@@ -28,6 +28,10 @@ body {
     border-radius: 10px;
     background-color: #111;
     margin: auto;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 h1 {
@@ -45,6 +49,12 @@ form, #timeframe-buttons {
     flex-direction: column;
     gap: 20px;
     align-items: center;
+}
+
+#timeframe-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 input[type="text"] {
