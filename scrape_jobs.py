@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
 import os
@@ -12,6 +11,10 @@ def fetch_job_posts(job_title, location):
     app_id = os.getenv('ADZUNA_APP_ID')
     app_key = os.getenv('ADZUNA_APP_KEY')
     
+    if not app_id or not app_key:
+        print("Missing Adzuna API credentials")
+        return []
+
     url = f"https://api.adzuna.com/v1/api/jobs/us/search/1?app_id={app_id}&app_key={app_key}&results_per_page=50&what={job_title}&where={location}"
     response = requests.get(url)
     print(f"Request URL: {url}")
