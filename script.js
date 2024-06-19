@@ -10,7 +10,7 @@ async function updateChart() {
 
     const jobTitles = [...new Set(filteredData.map(post => post.title))];
     const popularJobTitlesContainer = document.getElementById('popular-job-titles');
-    popularJobTitlesContainer.innerHTML = jobTitles.map(title => `<button>${title}</button>`).join('');
+    popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.map(title => `<button>${title}</button>`).join('');
 
     const chartData = filteredData.map(post => ({
         x: new Date(post.date_posted),

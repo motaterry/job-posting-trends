@@ -2,15 +2,27 @@ body {
     background-color: #000;
     color: #fff;
     font-family: 'VT323', monospace;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    text-align: center;
+    padding: 20px;
+}
+
+.icon {
+    width: 50px;
+    height: 50px;
+    display: block;
+    margin: 0 auto;
 }
 
 h1 {
-    text-align: center;
     font-size: 2.5em;
 }
 
 p {
-    text-align: center;
     margin-bottom: 20px;
 }
 
@@ -29,6 +41,7 @@ input[type="text"] {
     color: #fff;
     font-size: 1em;
     box-shadow: 0 1px 2px 0 rgba(18, 8, 44, 0.05);
+    flex: 1 0 0;
 }
 
 button {
