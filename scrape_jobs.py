@@ -2,9 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
+import os
+from dotenv import load_dotenv
 
-def scrape_job_posts(job_title, location):
-    url = f"https://www.indeed.com/jobs?q={job_title}&l={location}"
+# Load environment variables from .env file
+load_dotenv()
+
+def fetch_job_posts(job_title, location):
+    app_id = os.getenv('ADZUNA_APP_ID')
+    app_key = os.getenv('ADZUNA_APP_KEY')
+    
+    url = f"https://api.adzuna.com/v1/api/jobs/us/search/1?app_id={app_id}&app_key={app_key}&results_per_page=50&what={job_title}&where={location}"
     response = requests.get(url)
     print(f"Request URL: {url}")
     print(f"Response Status Code: {response.status_code}")
@@ -13,34 +21,23 @@ def scrape_job_posts(job_title, location):
         print("Failed to retrieve data")
         return []
 
-    soup = BeautifulSoup(response.content, 'html.parser')
-    job_elems = soup.find_all('div', class_='jobsearch-SerpJobCard')
-    print(f"Number of job elements found: {len(job_elems)}")
-
     job_data = []
-
-    for job_elem in job_elems:
-        title_elem = job_elem.find('h2', class_='title')
-        company_elem = job_elem.find('span', class_='company')
-        location_elem = job_elem.find('div', class_='location')
-        date_elem = job_elem.find('span', class_='date')
-
-        if None in (title_elem, company_elem, location_elem, date_elem):
-            continue
-
+    results = response.json().get('results', [])
+    
+    for job in results:
         job_data.append({
-            'title': title_elem.text.strip(),
-            'company': company_elem.text.strip(),
-            'location': location_elem.text.strip(),
-            'date_posted': date_elem.text.strip(),
+            'title': job.get('title'),
+            'company': job.get('company', {}).get('display_name'),
+            'location': job.get('location', {}).get('display_name'),
+            'date_posted': job.get('created'),
             'scraped_date': datetime.datetime.now().strftime('%Y-%m-%d')
         })
 
-    print(f"Scraped job data: {job_data}")
+    print(f"Fetched job data: {job_data}")
     return job_data
 
 # Example use
-job_posts = scrape_job_posts("UX Designer", "San Francisco, CA")
+job_posts = fetch_job_posts("UX Designer", "San Francisco, CA")
 if job_posts:
     df = pd.DataFrame(job_posts)
     df.to_csv('job_posts.csv', mode='w', index=False)
