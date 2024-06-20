@@ -1,0 +1,7 @@
+{
+  "name": "Codespace GPG Setup",
+  "postCreateCommand": "./setup_gpg.sh",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:1": {}
+  }
+}

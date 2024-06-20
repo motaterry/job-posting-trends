@@ -89,4 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     timeframeButtons.forEach(button => {
-        button
+        button.addEventListener('click', () => {
+            const timeframe = button.textContent.toLowerCase().replace(' ', '');
+            updateChart(timeframe);
+        });
+    });
+});
