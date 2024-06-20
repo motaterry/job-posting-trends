@@ -10,39 +10,18 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
     <div id="home-screen" class="screen active">
         <div class="content">
-            <!-- Header Section -->
             <img src="new-icon.svg" alt="Robot Icon" class="icon">
             <h1>Career Demand Forecast</h1>
             <p>Peering into the shadows of the job market, revealing hidden patterns and trends. Decode the pulse of your industry and the economy with insights you can't find anywhere else.</p>
-            
-            <!-- Search Bar Section -->
-            <form onsubmit="event.preventDefault(); updateChart('1year');">
+            <form id="searchForm" onsubmit="event.preventDefault(); updateChart('1year');">
                 <input type="text" id="jobRoleDisplay" placeholder="Start typing a Job Role (example: UX Designer)" required>
                 <button type="submit">See the magic</button>
             </form>
-        </div>
-    </div>
-
-    <div id="data-screen" class="screen">
-        <div class="content">
-            <!-- Job Title Variants Section (ODWSR) -->
-            <div id="job-title-variants" style="display:none;">
-                <h2>Here are the most popular Job Title Variants Included in this result:</h2>
-                <div id="variants-container">
-                    <!-- Job title variants will be dynamically inserted here -->
-                </div>
-                <button id="show-more" onclick="toggleVariants()">Show more</button>
-            </div>
-            
-            <!-- Graph Section (ODWSR) -->
             <canvas id="jobTrendChart" width="600" height="400"></canvas>
-            
-            <!-- Timeframe Tab Section -->
             <div id="timeframe-buttons">
                 <button onclick="updateChart('10years')">Past 10 Years</button>
                 <button onclick="updateChart('5years')">Past 5 Years</button>
@@ -51,17 +30,18 @@
                 <button onclick="updateChart('3months')">Past 3 Months</button>
                 <button onclick="updateChart('30days')">Past 30 Days</button>
             </div>
-
-            <!-- Insight Section (ODWSR) -->
-            <div id="insight-section" style="display:none;">
-                <h2>Market Insights</h2>
-                <p id="market-insight-text">Here you will find tips and forecasts based on current job market trends.</p>
+            <div id="jobTitleVariants" class="hidden">
+                <h2>Here are the most popular Job Title Variants Included in this result:</h2>
+                <div id="variants-list"></div>
+                <button id="showMoreButton" class="hidden" onclick="toggleVariants()">Show more</button>
             </div>
-
+            <div id="insight-section" class="hidden">
+                <h2>Insights</h2>
+                <p id="insights-content"></p>
+            </div>
             <div id="error-message" style="display:none; color: red; margin-top: 10px;"></div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

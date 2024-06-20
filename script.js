@@ -1,60 +1,25 @@
-document.getElementById('fetchButton').addEventListener('click', updateChart);
+document.addEventListener("DOMContentLoaded", function() {
+    const jobRoleDisplay = document.getElementById("jobRoleDisplay");
+    const jobTrendChart = document.getElementById("jobTrendChart");
+    const variantsList = document.getElementById("variants-list");
+    const showMoreButton = document.getElementById("showMoreButton");
+    const insightSection = document.getElementById("insight-section");
+    const insightsContent = document.getElementById("insights-content");
 
-async function updateChart(timeframe = '1year') {
-    const jobTitle = document.getElementById('jobTitle').value;
-    const response = await fetch(`job_posts.csv`);
-    const data = await response.text();
-    const parsedData = Papa.parse(data, { header: true }).data;
-
-    // Filter data by job title
-    const filteredData = parsedData.filter(post => post.title.includes(jobTitle));
-
-    if (filteredData.length === 0) {
-        document.getElementById('error-message').textContent = 'No results found';
-        document.getElementById('error-message').style.display = 'block';
+    if (!jobRoleDisplay || !jobTrendChart || !variantsList || !showMoreButton || !insightSection || !insightsContent) {
+        console.error("Required elements are not found in the DOM");
         return;
     }
 
-    document.getElementById('error-message').style.display = 'none';
-
-    // Display Job Title Variants Section
-    const jobTitles = [...new Set(filteredData.map(post => post.title))];
-    const popularJobTitlesContainer = document.getElementById('popular-job-titles');
-    popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.slice(0, 10).map(title => `<button>${title}</button>`).join('');
-    if (jobTitles.length > 10) {
-        popularJobTitlesContainer.innerHTML += `<button id="show-more">Show more</button>`;
-        popularJobTitlesContainer.innerHTML += `<button id="show-less" style="display: none;">Show less</button>`;
-        
-        document.getElementById('show-more').addEventListener('click', () => {
-            popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.map(title => `<button>${title}</button>`).join('');
-            document.getElementById('show-more').style.display = 'none';
-            document.getElementById('show-less').style.display = 'block';
-        });
-        
-        document.getElementById('show-less').addEventListener('click', () => {
-            popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.slice(0, 10).map(title => `<button>${title}</button>`).join('');
-            document.getElementById('show-more').style.display = 'block';
-            document.getElementById('show-less').style.display = 'none';
-        });
-    }
-
-    // Display Graph Section
-    const chartData = filteredData.map(post => ({
-        x: new Date(post.date_posted),
-        y: 1
-    }));
-
-    const ctx = document.getElementById('jobTrendChart').getContext('2d');
-    new Chart(ctx, {
+    const ctx = jobTrendChart.getContext('2d');
+    let chart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
                 label: 'Number of Job Posts',
-                data: chartData,
                 borderColor: '#561EFF',
-                backgroundColor: '#561EFF',
-                fill: false,
-                tension: 0.1
+                backgroundColor: 'rgba(86, 30, 255, 0.1)',
+                data: []
             }]
         },
         options: {
@@ -62,51 +27,69 @@ async function updateChart(timeframe = '1year') {
                 x: {
                     type: 'time',
                     time: {
-                        unit: timeframe
-                    },
-                    grid: {
-                        color: '#444'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Time'
+                        unit: 'month'
                     }
                 },
                 y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#444'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Number of Job Posts'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        color: '#fff'
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Date: ${context.label}, ${context.raw.y} job posts`;
-                        }
-                    }
+                    beginAtZero: true
                 }
             }
         }
     });
 
-    // Update active tab background color
-    document.querySelectorAll('#timeframe-buttons button').forEach(button => {
-        button.style.backgroundColor = button.textContent.includes(timeframe) ? '#561EFF' : '#444';
+    function updateChart(timeframe) {
+        const jobRole = jobRoleDisplay.value;
+        if (!jobRole) {
+            console.error("Job role input is empty");
+            return;
+        }
+
+        // Fetch and update the chart data based on the jobRole and timeframe
+        fetchJobData(jobRole, timeframe).then(data => {
+            chart.data.datasets[0].data = data.chartData;
+            chart.update();
+            updateVariants(data.variants);
+            updateInsights(data.insights);
+        }).catch(error => {
+            console.error("Error fetching job data:", error);
+        });
+    }
+
+    async function fetchJobData(jobRole, timeframe) {
+        // Your API call logic to fetch job data
+    }
+
+    function updateVariants(variants) {
+        variantsList.innerHTML = '';
+        variants.forEach(variant => {
+            let variantElement = document.createElement('div');
+            variantElement.textContent = variant;
+            variantsList.appendChild(variantElement);
+        });
+        if (variants.length > 10) {
+            showMoreButton.classList.remove('hidden');
+        }
+        document.getElementById('jobTitleVariants').classList.remove('hidden');
+    }
+
+    function toggleVariants() {
+        const isExpanded = variantsList.classList.toggle('expanded');
+        showMoreButton.textContent = isExpanded ? 'Show less' : 'Show more';
+    }
+
+    function updateInsights(insights) {
+        insightsContent.textContent = insights;
+        insightSection.classList.remove('hidden');
+    }
+
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        updateChart('1year');
     });
 
-    // Display Insight Section
-    document.getElementById('insight-section').innerHTML = `<p>Based on current trends, it's recommended to focus on...</p>`;
-    document.getElementById('insight-section').style.display = 'block';
-}
+    document.querySelectorAll("#timeframe-buttons button").forEach(button => {
+        button.addEventListener("click", function() {
+            updateChart(this.textContent);
+        });
+    });
+});

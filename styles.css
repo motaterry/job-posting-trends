@@ -1,42 +1,16 @@
 body {
     font-family: 'VT323', monospace;
-    background-color: #111;
+    background-color: #000;
     color: #fff;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.screen {
-    display: none;
-}
-
-.screen.active {
-    display: block;
-}
-
-.content {
-    padding: 20px;
-    text-align: center;
 }
 
 .icon {
-    width: 100px;
-    height: auto;
-    margin-bottom: 20px;
+    width: 50px;
+    height: 50px;
 }
 
-h1 {
-    font-size: 3rem;
-    margin: 0 0 10px;
-}
-
-p {
-    font-size: 1.5rem;
-    margin: 0 0 20px;
+h1, p {
+    text-align: center;
 }
 
 form {
@@ -44,96 +18,60 @@ form {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
 }
 
-input[type="text"] {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #C0B9D4;
-    border-radius: 5px;
-    background-color: #000;
-    color: #fff;
-    font-size: 1rem;
-    flex: 1 0 0;
-}
-
-button {
-    display: flex;
-    height: 45px;
-    padding: 12px 24px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid #7D52FF;
-    background: #382C5A;
-    box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
-    color: #fff;
-    cursor: pointer;
-    font-size: 1rem;
+#jobTrendChart {
+    margin: 20px auto;
+    display: block;
 }
 
 #timeframe-buttons {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-    margin: 20px 0;
+    margin-top: 10px;
 }
 
 #timeframe-buttons button {
-    padding: 10px 20px;
-    border: 1px solid #333;
-    background-color: #222;
+    background-color: #444;
     color: #fff;
+    border: none;
+    padding: 10px;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
 #timeframe-buttons button.active {
-    background-color: #444;
+    background-color: #561EFF;
 }
 
-#job-title-variants {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
+.hidden {
+    display: none;
 }
 
-#variants-container {
+#variants-list {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    justify-content: center;
-    margin-bottom: 10px;
 }
 
-#variants-container .variant {
-    padding: 4px 8px;
+#variants-list div {
     background-color: #2A2A2A;
-    color: #fff;
-    border-radius: 5px;
-    font-size: 1rem;
+    padding: 4px 8px;
 }
 
-#show-more {
-    background: none;
-    border: none;
-    color: #7D52FF;
-    cursor: pointer;
+#variants-list.expanded {
+    height: auto;
+    overflow: visible;
 }
 
 #insight-section {
-    display: none;
     margin-top: 20px;
 }
 
 #insight-section h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    text-align: center;
 }
 
 #insight-section p {
-    font-size: 1.25rem;
+    text-align: center;
 }
