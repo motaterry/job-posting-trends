@@ -1,24 +1,58 @@
-function showDataScreen() {
-    var jobRole = document.getElementById('jobRole').value;
-    document.getElementById('jobRoleDisplay').value = jobRole;
+document.getElementById('fetchButton').addEventListener('click', updateChart);
 
-    document.getElementById('home-screen').classList.remove('active');
-    document.getElementById('data-screen').classList.add('active');
+async function updateChart(timeframe = '1year') {
+    const jobTitle = document.getElementById('jobTitle').value;
+    const response = await fetch(`job_posts.csv`);
+    const data = await response.text();
+    const parsedData = Papa.parse(data, { header: true }).data;
 
-    updateChart('1year'); // Default to past year
-}
+    // Filter data by job title
+    const filteredData = parsedData.filter(post => post.title.includes(jobTitle));
 
-document.addEventListener("DOMContentLoaded", function() {
-    var ctx = document.getElementById('jobTrendChart').getContext('2d');
-    var jobTrendChart = new Chart(ctx, {
+    if (filteredData.length === 0) {
+        document.getElementById('error-message').textContent = 'No results found';
+        document.getElementById('error-message').style.display = 'block';
+        return;
+    }
+
+    document.getElementById('error-message').style.display = 'none';
+
+    // Display Job Title Variants Section
+    const jobTitles = [...new Set(filteredData.map(post => post.title))];
+    const popularJobTitlesContainer = document.getElementById('popular-job-titles');
+    popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.slice(0, 10).map(title => `<button>${title}</button>`).join('');
+    if (jobTitles.length > 10) {
+        popularJobTitlesContainer.innerHTML += `<button id="show-more">Show more</button>`;
+        popularJobTitlesContainer.innerHTML += `<button id="show-less" style="display: none;">Show less</button>`;
+        
+        document.getElementById('show-more').addEventListener('click', () => {
+            popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.map(title => `<button>${title}</button>`).join('');
+            document.getElementById('show-more').style.display = 'none';
+            document.getElementById('show-less').style.display = 'block';
+        });
+        
+        document.getElementById('show-less').addEventListener('click', () => {
+            popularJobTitlesContainer.innerHTML = `<p>Here are the most popular Job Title Variations Included in this result:</p>` + jobTitles.slice(0, 10).map(title => `<button>${title}</button>`).join('');
+            document.getElementById('show-more').style.display = 'block';
+            document.getElementById('show-less').style.display = 'none';
+        });
+    }
+
+    // Display Graph Section
+    const chartData = filteredData.map(post => ({
+        x: new Date(post.date_posted),
+        y: 1
+    }));
+
+    const ctx = document.getElementById('jobTrendChart').getContext('2d');
+    new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [], // This will be updated dynamically
             datasets: [{
                 label: 'Number of Job Posts',
-                data: [], // This will be updated dynamically
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2,
+                data: chartData,
+                borderColor: '#561EFF',
+                backgroundColor: '#561EFF',
                 fill: false,
                 tension: 0.1
             }]
@@ -28,7 +62,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 x: {
                     type: 'time',
                     time: {
-                        unit: 'month'
+                        unit: timeframe
+                    },
+                    grid: {
+                        color: '#444'
                     },
                     title: {
                         display: true,
@@ -37,6 +74,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 y: {
                     beginAtZero: true,
+                    grid: {
+                        color: '#444'
+                    },
                     title: {
                         display: true,
                         text: 'Number of Job Posts'
@@ -44,10 +84,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             },
             plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#fff'
+                    }
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `Date: ${context.label}, ${context.raw} job posts`;
+                            return `Date: ${context.label}, ${context.raw.y} job posts`;
                         }
                     }
                 }
@@ -55,54 +101,12 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    window.updateChart = function(timeframe) {
-        // Fetch data and update chart based on timeframe
-        var jobRole = document.getElementById('jobRoleDisplay').value;
-        var errorMessage = document.getElementById('error-message');
-        errorMessage.style.display = 'none'; // Hide error message before new request
+    // Update active tab background color
+    document.querySelectorAll('#timeframe-buttons button').forEach(button => {
+        button.style.backgroundColor = button.textContent.includes(timeframe) ? '#561EFF' : '#444';
+    });
 
-        // Here we should replace this with a real data fetching logic
-        var data = generateMockData(timeframe); // Mock data for demonstration purposes
-
-        jobTrendChart.data.labels = data.labels;
-        jobTrendChart.data.datasets[0].data = data.values;
-        jobTrendChart.update();
-    }
-
-    function generateMockData(timeframe) {
-        // Generate mock data based on the timeframe
-        var now = new Date();
-        var labels = [];
-        var values = [];
-        var startDate;
-
-        switch(timeframe) {
-            case '10years':
-                startDate = new Date(now.setFullYear(now.getFullYear() - 10));
-                break;
-            case '5years':
-                startDate = new Date(now.setFullYear(now.getFullYear() - 5));
-                break;
-            case '1year':
-                startDate = new Date(now.setFullYear(now.getFullYear() - 1));
-                break;
-            case '6months':
-                startDate = new Date(now.setMonth(now.getMonth() - 6));
-                break;
-            case '3months':
-                startDate = new Date(now.setMonth(now.getMonth() - 3));
-                break;
-            case '30days':
-                startDate = new Date(now.setDate(now.getDate() - 30));
-                break;
-        }
-
-        while (startDate <= now) {
-            labels.push(new Date(startDate));
-            values.push(Math.floor(Math.random() * 1000)); // Random values for demonstration
-            startDate.setMonth(startDate.getMonth() + 1);
-        }
-
-        return { labels: labels, values: values };
-    }
-});
+    // Display Insight Section
+    document.getElementById('insight-section').innerHTML = `<p>Based on current trends, it's recommended to focus on...</p>`;
+    document.getElementById('insight-section').style.display = 'block';
+}
