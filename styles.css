@@ -2,6 +2,24 @@ body {
     font-family: 'VT323', monospace;
     background-color: #000;
     color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+.content {
+    text-align: center;
 }
 
 .icon {
@@ -9,69 +27,95 @@ body {
     height: 50px;
 }
 
-h1, p {
-    text-align: center;
+h1 {
+    font-size: 2em;
+}
+
+p {
+    font-size: 1.2em;
 }
 
 form {
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 10px;
+    margin-top: 20px;
 }
 
-#jobTrendChart {
-    margin: 20px auto;
-    display: block;
+input[type="text"] {
+    display: flex;
+    padding: 12px 16px;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--Purple-200, #C0B9D4);
+    background: #000;
+    box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
+    flex: 1 0 0;
+}
+
+button {
+    display: flex;
+    height: 45px;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #7D52FF;
+    background: #382C5A;
+    box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
+    color: #fff;
+    cursor: pointer;
 }
 
 #timeframe-buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    align-items: center;
+    gap: -1px;
+    align-self: stretch;
+    margin-top: 20px;
 }
 
 #timeframe-buttons button {
-    background-color: #444;
+    display: flex;
+    padding: 12px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex: 1 0 0;
+    align-self: stretch;
+    border: 1px solid var(--Grey-150, #DCDCE1);
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+    box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
     color: #fff;
-    border: none;
-    padding: 10px;
     cursor: pointer;
 }
 
-#timeframe-buttons button.active {
-    background-color: #561EFF;
+#job-title-variants {
+    margin-top: 20px;
 }
 
-.hidden {
-    display: none;
-}
-
-#variants-list {
+#variant-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
+    justify-content: center;
 }
 
-#variants-list div {
-    background-color: #2A2A2A;
+.variant-chip {
+    display: flex;
     padding: 4px 8px;
-}
-
-#variants-list.expanded {
-    height: auto;
-    overflow: visible;
+    align-items: flex-start;
+    gap: 8px;
+    background: #2A2A2A;
+    color: #fff;
 }
 
 #insight-section {
     margin-top: 20px;
 }
 
-#insight-section h2 {
-    text-align: center;
-}
-
-#insight-section p {
-    text-align: center;
+#error-message {
+    margin-top: 10px;
+    color: red;
 }

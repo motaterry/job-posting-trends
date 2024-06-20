@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
     <div id="home-screen" class="screen active">
@@ -17,10 +18,14 @@
             <img src="new-icon.svg" alt="Robot Icon" class="icon">
             <h1>Career Demand Forecast</h1>
             <p>Peering into the shadows of the job market, revealing hidden patterns and trends. Decode the pulse of your industry and the economy with insights you can't find anywhere else.</p>
-            <form id="searchForm" onsubmit="event.preventDefault(); updateChart('1year');">
-                <input type="text" id="jobRoleDisplay" placeholder="Start typing a Job Role (example: UX Designer)" required>
+            <form onsubmit="event.preventDefault(); showDataScreen();">
+                <input type="text" id="jobRole" placeholder="Start typing a Job Role (example: UX Designer)" required>
                 <button type="submit">See the magic</button>
             </form>
+        </div>
+    </div>
+    <div id="data-screen" class="screen">
+        <div class="content">
             <canvas id="jobTrendChart" width="600" height="400"></canvas>
             <div id="timeframe-buttons">
                 <button onclick="updateChart('10years')">Past 10 Years</button>
@@ -30,14 +35,13 @@
                 <button onclick="updateChart('3months')">Past 3 Months</button>
                 <button onclick="updateChart('30days')">Past 30 Days</button>
             </div>
-            <div id="jobTitleVariants" class="hidden">
-                <h2>Here are the most popular Job Title Variants Included in this result:</h2>
-                <div id="variants-list"></div>
-                <button id="showMoreButton" class="hidden" onclick="toggleVariants()">Show more</button>
+            <div id="job-title-variants" style="display: none;">
+                <p>Here are the most popular Job Title Variations Included in this result:</p>
+                <div id="variant-chips"></div>
             </div>
-            <div id="insight-section" class="hidden">
-                <h2>Insights</h2>
-                <p id="insights-content"></p>
+            <div id="insight-section" style="display: none;">
+                <h2>Insight</h2>
+                <p id="insight-content"></p>
             </div>
             <div id="error-message" style="display:none; color: red; margin-top: 10px;"></div>
         </div>
