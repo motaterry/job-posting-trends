@@ -1,113 +1,116 @@
-function showDataScreen() {
-    var jobRole = document.getElementById('jobRole').value;
-    document.getElementById('jobRoleDisplay').value = jobRole;
+document.addEventListener("DOMContentLoaded", () => {
+    const jobRoleInput = document.getElementById('jobRole');
+    const jobRoleDisplay = document.getElementById('jobRoleDisplay');
+    const homeScreen = document.getElementById('home-screen');
+    const dataScreen = document.getElementById('data-screen');
+    const jobTitleVariants = document.getElementById('jobTitleVariants');
+    const jobTrendChart = document.getElementById('jobTrendChart');
+    const timeframeButtons = document.getElementById('timeframe-buttons');
 
-    document.getElementById('home-screen').classList.remove('active');
-    document.getElementById('data-screen').classList.add('active');
+    const proxies = [
+        'https://thingproxy.freeboard.io/fetch/',
+        'https://cors-anywhere.herokuapp.com/',
+        'https://api.allorigins.win/get?url='
+    ];
 
-    updateChart('1year'); // Default to past year
-}
+    function showDataScreen() {
+        const jobRole = jobRoleInput.value;
+        if (!jobRole) return;
 
-document.addEventListener("DOMContentLoaded", function() {
-    var ctx = document.getElementById('jobTrendChart').getContext('2d');
-    var jobTrendChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [], // This will be updated dynamically
-            datasets: [{
-                label: 'Number of Job Posts',
-                data: [], // This will be updated dynamically
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2,
-                fill: false,
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Time'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Job Posts'
-                    }
+        jobRoleDisplay.textContent = jobRole;
+        homeScreen.classList.remove('active');
+        dataScreen.classList.add('active');
+
+        // Fetch initial data
+        updateChart('1year');
+    }
+
+    async function fetchJobPosts(jobTitle, timeframe) {
+        const appId = '6b5d580a'; // Replace with your Adzuna App ID
+        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc'; // Replace with your Adzuna App Key
+        const adzunaUrl = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+
+        for (const proxy of proxies) {
+            const url = proxy + encodeURIComponent(adzunaUrl);
+            console.log(`Fetching data from URL: ${url}`);
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Date: ${context.label}, ${context.raw} job posts`;
+                const data = await response.json();
+                console.log('Fetched data:', data);
+                return data;
+            } catch (error) {
+                console.error(`Fetch error with proxy ${proxy}:`, error);
+            }
+        }
+        return null; // If all proxies fail, return null
+    }
+
+    async function updateChart(timeframe) {
+        const jobRole = jobRoleInput.value;
+        const data = await fetchJobPosts(jobRole, timeframe);
+
+        if (data) {
+            // Assuming data contains arrays of dates and job counts
+            const labels = data.results.map(item => item.created);
+            const jobCounts = data.results.map(item => item.count);
+
+            // Update the chart
+            const ctx = jobTrendChart.getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Job Posts',
+                        data: jobCounts,
+                        borderColor: '#561EFF',
+                        backgroundColor: 'rgba(86, 30, 255, 0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Job Posts'
+                            }
                         }
                     }
                 }
-            }
+            });
+
+            // Update job title variants
+            jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join('');
+        } else {
+            console.error('No data received');
         }
+    }
+
+    // Add event listener for the form submission
+    document.querySelector('form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        showDataScreen();
     });
 
-    window.updateChart = function(timeframe) {
-        var jobRole = document.getElementById('jobRoleDisplay').value;
-        var errorMessage = document.getElementById('error-message');
-        errorMessage.style.display = 'none'; // Hide error message before new request
-
-        // Fetch data from the CSV file
-        d3.csv("job_posts.csv").then(function(data) {
-            // Filter and format the data based on the selected timeframe
-            var filteredData = filterDataByTimeframe(data, timeframe);
-
-            var labels = filteredData.map(d => new Date(d.date_posted));
-            var values = filteredData.map(d => d.number_of_posts);
-
-            jobTrendChart.data.labels = labels;
-            jobTrendChart.data.datasets[0].data = values;
-            jobTrendChart.update();
-        }).catch(function(error) {
-            errorMessage.textContent = "Error fetching data: " + error.message;
-            errorMessage.style.display = 'block';
+    // Add event listeners for the timeframe buttons
+    timeframeButtons.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+            updateChart(button.getAttribute('data-timeframe'));
         });
-    }
-
-    function filterDataByTimeframe(data, timeframe) {
-        var now = new Date();
-        var filteredData;
-
-        switch(timeframe) {
-            case '10years':
-                var tenYearsAgo = new Date(now.setFullYear(now.getFullYear() - 10));
-                filteredData = data.filter(d => new Date(d.date_posted) >= tenYearsAgo);
-                break;
-            case '5years':
-                var fiveYearsAgo = new Date(now.setFullYear(now.getFullYear() - 5));
-                filteredData = data.filter(d => new Date(d.date_posted) >= fiveYearsAgo);
-                break;
-            case '1year':
-                var oneYearAgo = new Date(now.setFullYear(now.getFullYear() - 1));
-                filteredData = data.filter(d => new Date(d.date_posted) >= oneYearAgo);
-                break;
-            case '6months':
-                var sixMonthsAgo = new Date(now.setMonth(now.getMonth() - 6));
-                filteredData = data.filter(d => new Date(d.date_posted) >= sixMonthsAgo);
-                break;
-            case '3months':
-                var threeMonthsAgo = new Date(now.setMonth(now.getMonth() - 3));
-                filteredData = data.filter(d => new Date(d.date_posted) >= threeMonthsAgo);
-                break;
-            case '30days':
-                var thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
-                filteredData = data.filter(d => new Date(d.date_posted) >= thirtyDaysAgo);
-                break;
-        }
-
-        return filteredData;
-    }
+    });
 });
