@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchJobPosts(jobTitle, timeframe) {
         const appId = '6b5d580a';
         const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
-        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${app_id}&app_key=${app_key}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
         console.log(`Fetching data from URL: ${url}`);
 
@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data) {
             // Assuming data contains arrays of dates and job counts
-            const labels = data.map(item => item.date);
-            const jobCounts = data.map(item => item.count);
+            const labels = data.results.map(item => item.created);
+            const jobCounts = data.results.map(item => item.count);
 
             // Update the chart
             const ctx = jobTrendChart.getContext('2d');
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // Update job title variants
-            jobTitleVariants.innerHTML = data.variants.map(variant => `<div class="variant-chip">${variant}</div>`).join('');
+            jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join('');
         } else {
             console.error('No data received');
         }
