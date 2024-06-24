@@ -1,34 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const homeScreen = document.getElementById('home-screen');
-    const dataScreen = document.getElementById('data-screen');
+document.addEventListener("DOMContentLoaded", () => {
     const jobRoleInput = document.getElementById('jobRole');
     const jobRoleDisplay = document.getElementById('jobRoleDisplay');
+    const homeScreen = document.getElementById('home-screen');
+    const dataScreen = document.getElementById('data-screen');
     const jobTitleVariants = document.getElementById('jobTitleVariants');
-    const jobTrendChart = document.getElementById('jobTrendChart').getContext('2d');
-    let chart;
-
-    async function fetchJobPosts(jobTitle, timeframe) {
-        const appId = '6b5d580a';
-        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
-        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}`;
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            // Process and return the data in the format required by your application
-            return data.results.map(job => ({
-                date: job.created,
-                count: 1,
-                variants: job.title
-            }));
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return null;
-        }
-    }
+    const jobTrendChart = document.getElementById('jobTrendChart');
+    const timeframeButtons = document.getElementById('timeframe-buttons');
 
     function showDataScreen() {
         const jobRole = jobRoleInput.value;
@@ -42,21 +19,39 @@ document.addEventListener('DOMContentLoaded', () => {
         updateChart('1year');
     }
 
+    async function fetchJobPosts(jobTitle, timeframe) {
+        const appId = '6b5d580a';
+        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
+        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${app_id}&app_key=${app_key}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+
+        console.log(`Fetching data from URL: ${url}`);
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log('Fetched data:', data);
+            return data;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            return null;
+        }
+    }
+
     async function updateChart(timeframe) {
         const jobRole = jobRoleInput.value;
         const data = await fetchJobPosts(jobRole, timeframe);
 
         if (data) {
+            // Assuming data contains arrays of dates and job counts
             const labels = data.map(item => item.date);
             const jobCounts = data.map(item => item.count);
 
-            // Destroy existing chart if it exists
-            if (chart) {
-                chart.destroy();
-            }
-
-            // Create new chart
-            chart = new Chart(jobTrendChart, {
+            // Update the chart
+            const ctx = jobTrendChart.getContext('2d');
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -97,5 +92,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.showDataScreen = showDataScreen;
+    // Add event listener for the form submission
+    document.querySelector('form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        showDataScreen();
+    });
+
+    // Add event listeners for the timeframe buttons
+    timeframeButtons.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+            updateChart(button.getAttribute('data-timeframe'));
+        });
+    });
 });
