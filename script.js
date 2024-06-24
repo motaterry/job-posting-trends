@@ -7,6 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const jobTrendChart = document.getElementById('jobTrendChart');
     const timeframeButtons = document.getElementById('timeframe-buttons');
 
+    const proxies = [
+        'https://thingproxy.freeboard.io/fetch/',
+        'https://cors-anywhere.herokuapp.com/',
+        'https://api.allorigins.win/get?url='
+    ];
+
     function showDataScreen() {
         const jobRole = jobRoleInput.value;
         if (!jobRole) return;
@@ -19,39 +25,28 @@ document.addEventListener("DOMContentLoaded", () => {
         updateChart('1year');
     }
 
-    const corsProxies = [
-        'https://api.allorigins.win/get?url=',
-        'https://cors-anywhere.herokuapp.com/',
-        'https://thingproxy.freeboard.io/fetch/'
-    ];
-
     async function fetchJobPosts(jobTitle, timeframe) {
-        const appId = '6b5d580a';
-        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
-        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+        const appId = '6b5d580a'; // Replace with your Adzuna App ID
+        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc'; // Replace with your Adzuna App Key
+        const adzunaUrl = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
-        for (let proxy of corsProxies) {
-            console.log(`Fetching data from URL: ${proxy}${encodeURIComponent(url)}`);
+        for (const proxy of proxies) {
+            const url = proxy + encodeURIComponent(adzunaUrl);
+            console.log(`Fetching data from URL: ${url}`);
 
             try {
-                const response = await fetch(`${proxy}${encodeURIComponent(url)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Fetched data:', data);
-                    return proxy === 'https://api.allorigins.win/get?url=' ? JSON.parse(data.contents) : data;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                console.warn(`Proxy failed: ${proxy}`);
+                const data = await response.json();
+                console.log('Fetched data:', data);
+                return data;
             } catch (error) {
                 console.error(`Fetch error with proxy ${proxy}:`, error);
             }
         }
-
-        return null;
+        return null; // If all proxies fail, return null
     }
 
     async function updateChart(timeframe) {
