@@ -98,8 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         showDataScreen();
     });
-
     // Add event listeners for the timeframe buttons
+
     timeframeButtons.querySelectorAll('button').forEach(button => {
         button.addEventListener('click', () => {
             updateChart(button.getAttribute('data-timeframe'));
