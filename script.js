@@ -20,9 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchJobPosts(jobTitle, timeframe) {
-        const app_id = 'your_app_id';
-        const app_key = 'your_app_key';
-        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${app_id}&app_key=${app_key}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+        const app_id = '6b5d580a';
+        const app_key = 'e8825cea476a7c35f4ec84faf82cdbfc';
+        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${6b5d580a}&app_key=${e8825cea476a7c35f4ec84faf82cdbfc}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
         console.log(`Fetching data from URL: ${url}`);
 
