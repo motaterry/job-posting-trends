@@ -20,14 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchJobPosts(jobTitle, timeframe) {
-        const appId = '6b5d580a';
-        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
+        const appId = '6b5d580a'; // Replace with your Adzuna App ID
+        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc'; // Replace with your Adzuna App Key
         const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
         console.log(`Fetching data from URL: ${url}`);
 
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -44,12 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const jobRole = jobRoleInput.value;
         const data = await fetchJobPosts(jobRole, timeframe);
 
-        console.log('Data received for chart update:', data); // Log the data here
-
-        if (data) {
+        if (data && data.results) {
+            // Assuming data.results contains arrays of dates and job counts
             const labels = data.results.map(item => item.created);
             const jobCounts = data.results.map(item => item.count);
 
+            // Update the chart
             const ctx = jobTrendChart.getContext('2d');
             new Chart(ctx, {
                 type: 'line',
@@ -85,19 +90,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
+            // Update job title variants
             jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join('');
         } else {
             console.error('No data received');
         }
     }
 
-// Add event listener for the form submission
+    // Add event listener for the form submission
     document.querySelector('form').addEventListener('submit', (event) => {
         event.preventDefault();
         showDataScreen();
     });
-    // Add event listeners for the timeframe buttons
 
+    // Add event listeners for the timeframe buttons
     timeframeButtons.querySelectorAll('button').forEach(button => {
         button.addEventListener('click', () => {
             updateChart(button.getAttribute('data-timeframe'));
