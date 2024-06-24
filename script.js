@@ -20,9 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchJobPosts(jobTitle, timeframe) {
-        const appId = '6b5d580a'; // Replace with your Adzuna App ID
-        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc'; // Replace with your Adzuna App Key
-        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+        const appId = '6b5d580a';
+        const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
+        const url = `${corsProxy}https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
         console.log(`Fetching data from URL: ${url}`);
 
@@ -49,8 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const jobRole = jobRoleInput.value;
         const data = await fetchJobPosts(jobRole, timeframe);
 
-        if (data && data.results) {
-            // Assuming data.results contains arrays of dates and job counts
+        if (data) {
+            // Assuming data contains arrays of dates and job counts
             const labels = data.results.map(item => item.created);
             const jobCounts = data.results.map(item => item.count);
 
