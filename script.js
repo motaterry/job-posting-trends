@@ -20,12 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchJobPosts(jobTitle, timeframe) {
+        const app_id = 'your_app_id';
+        const app_key = 'your_app_key';
+        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${app_id}&app_key=${app_key}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+
+        console.log(`Fetching data from URL: ${url}`);
+
         try {
-            const response = await fetch(`YOUR_API_URL?job_title=${jobTitle}&timeframe=${timeframe}`);
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
+            console.log('Fetched data:', data);
             return data;
         } catch (error) {
             console.error('Fetch error:', error);
@@ -38,12 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await fetchJobPosts(jobRole, timeframe);
 
         if (data) {
-            // Update the chart with the data
-            // Assume data contains arrays of dates and job counts
+            // Assuming data contains arrays of dates and job counts
             const labels = data.map(item => item.date);
             const jobCounts = data.map(item => item.count);
 
-            // If you are using Chart.js
+            // Update the chart
             const ctx = jobTrendChart.getContext('2d');
             new Chart(ctx, {
                 type: 'line',
@@ -81,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Update job title variants
             jobTitleVariants.innerHTML = data.variants.map(variant => `<div class="variant-chip">${variant}</div>`).join('');
+        } else {
+            console.error('No data received');
         }
     }
 
