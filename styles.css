@@ -1,7 +1,7 @@
 body {
     font-family: 'VT323', monospace;
-    background-color: #000;
-    color: #fff;
+    background-color: #121212;
+    color: #ffffff;
 }
 
 .screen {
@@ -18,8 +18,35 @@ body {
 }
 
 .icon {
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: auto;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="text"] {
+    flex: 1 0 0;
+    padding: 12px 16px;
+    border: 1px solid var(--Purple-200, #C0B9D4);
+    background-color: #000;
+    color: #fff;
+    font-size: 1em;
+    box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
 }
 
 .primary-button {
@@ -30,19 +57,8 @@ body {
     align-items: center;
     gap: 10px;
     border: 1px solid #7D52FF;
-    background-color: #382C5A;
-    color: #fff;
+    background: #382C5A;
     box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--Purple-200, #C0B9D4);
-    background-color: #000;
-    color: #fff;
-    box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
-    flex: 1 0 0;
 }
 
 #timeframe-buttons {
@@ -50,8 +66,6 @@ input[type="text"] {
     justify-content: center;
     align-items: center;
     gap: -1px;
-    align-self: stretch;
-    padding: 32px 0;
 }
 
 #timeframe-buttons button {
@@ -60,28 +74,15 @@ input[type="text"] {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    flex: 1 0 0;
-    align-self: stretch;
     border: 1px solid var(--Grey-150, #DCDAE1);
-    background: linear-gradient(0deg, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%);
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%);
     box-shadow: 0px 1px 2px 0px rgba(18, 8, 44, 0.05);
-    color: #fff;
 }
 
-#timeframe-buttons button.active {
-    background-color: #7D52FF;
-}
-
-.chip {
+#jobTitleVariants {
     display: flex;
     padding: 4px 8px;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
     background: #2A2A2A;
-    border-radius: 16px;
-    color: #fff;
-}
-
-canvas {
-    margin: 20px 0;
 }

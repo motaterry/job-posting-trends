@@ -1,22 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const homeScreen = document.getElementById('home-screen');
-    const dataScreen = document.getElementById('data-screen');
+document.addEventListener("DOMContentLoaded", () => {
     const jobRoleInput = document.getElementById('jobRole');
     const jobRoleDisplay = document.getElementById('jobRoleDisplay');
-    const jobVariantsDiv = document.getElementById('job-variants');
-    const errorMessage = document.getElementById('error-message');
-
-    async function fetchJobData(jobRole, timeframe) {
-        try {
-            const response = await fetch(`YOUR_API_ENDPOINT?role=${jobRole}&timeframe=${timeframe}`);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching job data:', error);
-            errorMessage.textContent = 'Failed to fetch data. Please try again later.';
-            errorMessage.style.display = 'block';
-        }
-    }
+    const homeScreen = document.getElementById('home-screen');
+    const dataScreen = document.getElementById('data-screen');
+    const jobTitleVariants = document.getElementById('jobTitleVariants');
+    const jobTrendChart = document.getElementById('jobTrendChart');
+    const timeframeButtons = document.getElementById('timeframe-buttons');
 
     function showDataScreen() {
         const jobRole = jobRoleInput.value;
@@ -30,29 +19,42 @@ document.addEventListener('DOMContentLoaded', () => {
         updateChart('1year');
     }
 
+    async function fetchJobPosts(jobTitle, timeframe) {
+        try {
+            const response = await fetch(`YOUR_API_URL?job_title=${jobTitle}&timeframe=${timeframe}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            return null;
+        }
+    }
+
     async function updateChart(timeframe) {
         const jobRole = jobRoleInput.value;
-        const data = await fetchJobData(jobRole, timeframe);
+        const data = await fetchJobPosts(jobRole, timeframe);
 
         if (data) {
-            // Update job variants
-            const jobVariants = data.variants.slice(0, 10);
-            jobVariantsDiv.innerHTML = jobVariants.map(variant => `<div class="chip">${variant}</div>`).join('');
-            if (data.variants.length > 10) {
-                jobVariantsDiv.innerHTML += '<button onclick="showMoreVariants()">Show more</button>';
-            }
+            // Update the chart with the data
+            // Assume data contains arrays of dates and job counts
+            const labels = data.map(item => item.date);
+            const jobCounts = data.map(item => item.count);
 
-            // Update chart
-            const ctx = document.getElementById('jobTrendChart').getContext('2d');
+            // If you are using Chart.js
+            const ctx = jobTrendChart.getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.trend.map(item => item.date),
+                    labels: labels,
                     datasets: [{
                         label: 'Number of Job Posts',
-                        data: data.trend.map(item => item.count),
+                        data: jobCounts,
                         borderColor: '#561EFF',
-                        fill: false,
+                        backgroundColor: 'rgba(86, 30, 255, 0.2)',
+                        borderWidth: 2
                     }]
                 },
                 options: {
@@ -61,34 +63,37 @@ document.addEventListener('DOMContentLoaded', () => {
                             type: 'time',
                             time: {
                                 unit: 'month'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Job Posts'
                             }
                         }
                     }
                 }
             });
+
+            // Update job title variants
+            jobTitleVariants.innerHTML = data.variants.map(variant => `<div class="variant-chip">${variant}</div>`).join('');
         }
     }
 
-    function showMoreVariants() {
-        const jobRole = jobRoleInput.value;
-        const timeframe = '1year';
-        fetchJobData(jobRole, timeframe).then(data => {
-            const jobVariants = data.variants;
-            jobVariantsDiv.innerHTML = jobVariants.map(variant => `<div class="chip">${variant}</div>`).join('');
-            jobVariantsDiv.innerHTML += '<button onclick="showLessVariants()">Show less</button>';
-        });
-    }
+    // Add event listener for the form submission
+    document.querySelector('form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        showDataScreen();
+    });
 
-    function showLessVariants() {
-        updateChart('1year');
-    }
-
-    document.querySelector('form').addEventListener('submit', showDataScreen);
-
-    document.querySelectorAll('#timeframe-buttons button').forEach(button => {
+    // Add event listeners for the timeframe buttons
+    timeframeButtons.querySelectorAll('button').forEach(button => {
         button.addEventListener('click', () => {
-            const timeframe = button.textContent.toLowerCase().replace(' ', '');
-            updateChart(timeframe);
+            updateChart(button.getAttribute('data-timeframe'));
         });
     });
 });
