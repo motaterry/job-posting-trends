@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log('Fetched data:', data);
+            console.log('Fetched data:', data); // Log the fetched data here
             return data;
         } catch (error) {
             console.error('Fetch error:', error);
@@ -44,10 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const jobRole = jobRoleInput.value;
         const data = await fetchJobPosts(jobRole, timeframe);
 
+        console.log('Data received for chart update:', data); // Log the data here
+
         if (data) {
-            // Assuming data contains arrays of dates and job counts
-            const labels = data.results.map(item => item.created);
-            const jobCounts = data.results.map(item => item.count);
+            const labels = data.results.map(item => item.created); // Adjust based on actual data structure
+            const jobCounts = data.results.map(item => item.count); // Adjust based on actual data structure
 
             // Update the chart
             const ctx = jobTrendChart.getContext('2d');
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // Update job title variants
-            jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join('');
+            jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join(''); // Adjust based on actual data structure
         } else {
             console.error('No data received');
         }
