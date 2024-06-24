@@ -19,31 +19,39 @@ document.addEventListener("DOMContentLoaded", () => {
         updateChart('1year');
     }
 
+    const corsProxies = [
+        'https://api.allorigins.win/get?url=',
+        'https://cors-anywhere.herokuapp.com/',
+        'https://thingproxy.freeboard.io/fetch/'
+    ];
+
     async function fetchJobPosts(jobTitle, timeframe) {
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
         const appId = '6b5d580a';
         const appKey = 'e8825cea476a7c35f4ec84faf82cdbfc';
-        const url = `${corsProxy}https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
+        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
-        console.log(`Fetching data from URL: ${url}`);
+        for (let proxy of corsProxies) {
+            console.log(`Fetching data from URL: ${proxy}${encodeURIComponent(url)}`);
 
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
+            try {
+                const response = await fetch(`${proxy}${encodeURIComponent(url)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Fetched data:', data);
+                    return proxy === 'https://api.allorigins.win/get?url=' ? JSON.parse(data.contents) : data;
                 }
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+                console.warn(`Proxy failed: ${proxy}`);
+            } catch (error) {
+                console.error(`Fetch error with proxy ${proxy}:`, error);
             }
-            const data = await response.json();
-            console.log('Fetched data:', data);
-            return data;
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return null;
         }
+
+        return null;
     }
 
     async function updateChart(timeframe) {
