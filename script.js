@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log('Fetched data:', data); // Log the fetched data here
+            console.log('Fetched data:', data);
             return data;
         } catch (error) {
             console.error('Fetch error:', error);
@@ -47,10 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('Data received for chart update:', data); // Log the data here
 
         if (data) {
-            const labels = data.results.map(item => item.created); // Adjust based on actual data structure
-            const jobCounts = data.results.map(item => item.count); // Adjust based on actual data structure
+            const labels = data.results.map(item => item.created);
+            const jobCounts = data.results.map(item => item.count);
 
-            // Update the chart
             const ctx = jobTrendChart.getContext('2d');
             new Chart(ctx, {
                 type: 'line',
@@ -86,14 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Update job title variants
-            jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join(''); // Adjust based on actual data structure
+            jobTitleVariants.innerHTML = data.results.map(variant => `<div class="variant-chip">${variant.title}</div>`).join('');
         } else {
             console.error('No data received');
         }
     }
 
-    // Add event listener for the form submission
+// Add event listener for the form submission
     document.querySelector('form').addEventListener('submit', (event) => {
         event.preventDefault();
         showDataScreen();
