@@ -1,5 +1,5 @@
 import express from 'express';
-import fetch from 'node-fetch';
+import axios from 'axios';
 import path from 'path';
 
 const app = express();
@@ -20,9 +20,8 @@ app.get('/api/job-posts', async (req, res) => {
     const apiUrl = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
     try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        res.json(data);
+        const response = await axios.get(apiUrl);
+        res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
