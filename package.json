@@ -1,0 +1,16 @@
+{
+  "name": "job-posting-trends",
+  "version": "1.0.0",
+  "description": "This project aims to create a simple web page that visualizes job posting trends over time. It includes a filtering mechanism to view trends for specific job titles. The project uses HTML, CSS, and JavaScript, and leverages Chart.js for data visualization",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
+  }
+}
