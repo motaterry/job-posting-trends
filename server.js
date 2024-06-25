@@ -1,4 +1,6 @@
-const express = require('express');
+import express from 'express';
+import fetch from 'node-fetch';
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -9,7 +11,6 @@ app.get('/api/job-posts', async (req, res) => {
     const apiUrl = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${jobTitle}&where=USA&max_days_old=${timeframe}`;
 
     try {
-        const fetch = (await import('node-fetch')).default;
         const response = await fetch(apiUrl);
         const data = await response.json();
         res.json(data);
